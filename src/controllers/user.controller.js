@@ -133,8 +133,8 @@ const loginuser=asynchandler(async (req,res)=>{
 const logoutuser=asynchandler(async(req,res)=>{
     await User.findByIdAndUpdate(req.user._id,
         {
-            $set:{
-                refreshtoken:undefined
+            $unset:{
+                refreshtoken:1
             }
         },
         {
@@ -157,7 +157,7 @@ const logoutuser=asynchandler(async(req,res)=>{
 
 const refreshaccesstoken=asynchandler(async(req,res)=>
     {
-        const incomingrefreshtoken=req.cookie.refreshtoken || req.body.refreshtoken
+        const incomingrefreshtoken=req.cookies?.refreshtoken || req.body.refreshtoken
 
         if(!incomingrefreshtoken){
             throw new apierror(401,"Authorized request")
@@ -202,13 +202,17 @@ const refreshaccesstoken=asynchandler(async(req,res)=>
 
 const changecurrentpassword=asynchandler(async(req,res)=>{
     const {oldpassword,newpassword}=req.body
+    // console.log(req.body);
     
     const user=await User.findById(req.user?._id)
+    console.log(user);
     const ispasswordcorrect =await user.ispasswordcorrect(oldpassword)
+    console.log(ispasswordcorrect);
 
     if(!ispasswordcorrect){
         throw new apierror(400,"Invalid old password")
     }
+
 
     user.password=newpassword
     await user.save({validateBeforeSave: false})

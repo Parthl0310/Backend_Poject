@@ -30,7 +30,7 @@ router.route("/register").post(
 )
 
 router.route("/login").post(loginuser)
-
+    
 router.route("/logout").post(verifyJWT,logoutuser)
 router.route("/refresh-token").post(refreshaccesstoken)
 router.route("/change-password").post(verifyJWT,changecurrentpassword),
